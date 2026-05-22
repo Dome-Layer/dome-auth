@@ -1,0 +1,15 @@
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.12"
+ignore_missing_imports = true
+disable_error_code = ["attr-defined", "arg-type", "assignment", "override", "union-attr", "index", "call-overload"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
