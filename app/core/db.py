@@ -1,17 +1,10 @@
-from __future__ import annotations
-
-from supabase import Client, create_client
+from dome_core.db import get_db as _get_db
 
 from app.core.config import settings
 
-_client: Client | None = None
+
+def get_db():
+    return _get_db(url=settings.supabase_url, service_role_key=settings.supabase_service_role_key)
 
 
-def get_db() -> Client:
-    """Return the Supabase service-role client (lazy singleton)."""
-    global _client
-    if _client is None:
-        if not settings.supabase_url or not settings.supabase_service_role_key:
-            raise RuntimeError("SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set in .env")
-        _client = create_client(settings.supabase_url, settings.supabase_service_role_key)
-    return _client
+__all__ = ["get_db"]
