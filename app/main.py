@@ -1,7 +1,6 @@
+from dome_core.middleware import SecurityHeadersMiddleware
 from fastapi import FastAPI
-from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.middleware.cors import CORSMiddleware
-from starlette.requests import Request as StarletteRequest
 
 from app.api import auth
 from app.core.config import settings
@@ -22,20 +21,8 @@ app = FastAPI(
 
 origins = [o.strip() for o in settings.allowed_origins.split(",")]
 
-
-class SecurityHeadersMiddleware(BaseHTTPMiddleware):
-    async def dispatch(self, request: StarletteRequest, call_next):
-        response = await call_next(request)
-        response.headers["X-Content-Type-Options"] = "nosniff"
-        response.headers["X-Frame-Options"] = "DENY"
-        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
-        if settings.environment in ("staging", "production"):
-            response.headers["Strict-Transport-Security"] = "max-age=63072000; includeSubDomains"
-        return response
-
-
 app.add_middleware(RateLimitMiddleware)
-app.add_middleware(SecurityHeadersMiddleware)
+app.add_middleware(SecurityHeadersMiddleware, environment=settings.environment)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
