@@ -43,3 +43,11 @@ jobs:
         run: mypy .
       - name: Tests (pytest)
         run: pytest
+
+  docker-build:
+    name: docker-build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Docker image (no push)
+        run: docker build -t ci-build .
