@@ -1,4 +1,4 @@
-from dome_core.middleware import SecurityHeadersMiddleware
+from dome_core.middleware import RequestIDMiddleware, SecurityHeadersMiddleware
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
@@ -30,6 +30,7 @@ app.add_middleware(
     allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
     allow_headers=["Authorization", "Content-Type"],
 )
+app.add_middleware(RequestIDMiddleware)
 
 app.include_router(auth.router)
 
