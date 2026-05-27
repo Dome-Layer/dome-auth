@@ -20,7 +20,7 @@ deprecation==2.1.0
     # via postgrest
 distlib==0.4.0
     # via virtualenv
-dome-core @ git+https://github.com/Dome-Layer/dome-core.git@04461093f32bc172553a8b2e8ee65de3bc863211
+dome-core @ git+https://github.com/Dome-Layer/dome-core.git@7da8133816cfeca5bf36a7c61abc7e6729576495
     # via -r requirements.in
 fastapi==0.115.0
     # via
