@@ -25,12 +25,21 @@ jobs:
       - uses: astral-sh/setup-uv@v5
       - name: Install dependencies
         run: pip install -r requirements.txt -r requirements-dev.txt
-      - name: Verify lock files are up to date
+      - name: Verify lock files match their inputs
+        # Re-compile each lock SEEDED from the committed file (the `cp` first), so
+        # uv treats the existing pins as preferences — note: NO --upgrade. A routine
+        # upstream PyPI release therefore can't drift the result; only a
+        # requirements.in change that was never re-compiled, or a hand-edited lock,
+        # produces a diff and fails this gate. Deliberate version bumps arrive as
+        # Dependabot PRs; pip-audit (below) gates CVEs on the shipped lock.
+        # Rationale: dome-docs/decisions/DOME_DECISIONS.md (2026-06-01, DA-007 follow-up).
         run: |
+          cp requirements.txt /tmp/req.txt
           uv pip compile requirements.in -o /tmp/req.txt --python-version 3.12
           tail -n +3 requirements.txt > /tmp/req-local.txt
           tail -n +3 /tmp/req.txt > /tmp/req-ci.txt
           diff /tmp/req-local.txt /tmp/req-ci.txt
+          cp requirements-dev.txt /tmp/req-dev.txt
           uv pip compile requirements-dev.in -o /tmp/req-dev.txt --python-version 3.12
           tail -n +3 requirements-dev.txt > /tmp/req-dev-local.txt
           tail -n +3 /tmp/req-dev.txt > /tmp/req-dev-ci.txt
