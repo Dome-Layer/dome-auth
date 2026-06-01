@@ -1,0 +1,17 @@
+# DA-007: dependency CVE scanning + freshness. Dependabot watches the full
+# dependency set (prod + dev) and opens grouped weekly PRs; CI's pip-audit
+# gates the shipped surface. github-actions keeps workflow pins fresh.
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    groups:
+      python-minor-patch:
+        update-types: ["minor", "patch"]
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
