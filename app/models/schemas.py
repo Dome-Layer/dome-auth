@@ -20,10 +20,15 @@ class VerifyRequest(BaseModel):
     token: str
 
 
+class RefreshRequest(BaseModel):
+    refresh_token: str
+
+
 class SessionResponse(BaseModel):
     user_id: str
     email: str
     access_token: str
+    refresh_token: str
     expires_at: datetime
 
 
