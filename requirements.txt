@@ -24,9 +24,9 @@ deprecation==2.1.0
     # via
     #   postgrest
     #   storage3
-dome-core @ git+https://github.com/Dome-Layer/dome-core.git@b65bcf0548b102c69b5ae45014cb51f09ad99f56
+dome-core @ git+https://github.com/Dome-Layer/dome-core.git@v0.3.0
     # via -r requirements.in
-fastapi==0.136.3
+fastapi==0.137.1
     # via
     #   -r requirements.in
     #   dome-core
@@ -43,7 +43,7 @@ httpcore==1.0.9
     # via httpx
 httptools==0.8.0
     # via uvicorn
-httpx==0.27.2
+httpx[http2]==0.28.1
     # via
     #   -r requirements.in
     #   postgrest
@@ -82,7 +82,7 @@ pydantic-core==2.46.4
     # via pydantic
 pydantic-settings==2.14.1
     # via -r requirements.in
-pyjwt==2.13.0
+pyjwt[crypto]==2.13.0
     # via
     #   dome-core
     #   supabase-auth
@@ -97,12 +97,10 @@ realtime==2.31.0
     # via supabase
 redis==5.2.1
     # via -r requirements.in
-sentry-sdk==2.62.0
+sentry-sdk[fastapi]==2.63.0
     # via
     #   -r requirements.in
     #   dome-core
-sniffio==1.3.1
-    # via httpx
 starlette==1.3.1
     # via fastapi
 storage3==2.31.0
@@ -123,12 +121,10 @@ supabase-functions==2.31.0
     # via supabase
 typing-extensions==4.15.0
     # via
-    #   anyio
     #   fastapi
     #   pydantic
     #   pydantic-core
     #   realtime
-    #   starlette
     #   typing-inspection
 typing-inspection==0.4.2
     # via
@@ -137,7 +133,7 @@ typing-inspection==0.4.2
     #   pydantic-settings
 urllib3==2.7.0
     # via sentry-sdk
-uvicorn==0.49.0
+uvicorn[standard]==0.49.0
     # via -r requirements.in
 uvloop==0.22.1
     # via uvicorn
