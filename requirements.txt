@@ -95,8 +95,6 @@ pyyaml==6.0.3
     # via uvicorn
 realtime==2.31.0
     # via supabase
-redis==5.2.1
-    # via -r requirements.in
 sentry-sdk==2.62.0
     # via
     #   -r requirements.in

@@ -1,9 +1,10 @@
 """
 Sliding-window rate limiter.
 
-Backed by Redis when ``REDIS_URL`` is configured (shared across instances),
-falls back to in-process memory when Redis is not available (single-instance
-only). Both stores fail open on transient I/O errors.
+The store is in-process memory, so limits are per replica and reset on every
+redeploy. The service runs a single replica; a shared store was removed as
+unneeded (DOME_DECISIONS 2026-09-15). Revisit before scaling out. Checks fail
+open on unexpected errors.
 """
 
 import time
@@ -31,38 +32,6 @@ def get_client_ip(request: Request) -> str:
     return request.client.host if request.client else "unknown"
 
 
-class _RedisStore:
-    def __init__(self, redis_url: str, key_prefix: str = ""):
-        import redis as redis_lib
-
-        self._r = redis_lib.from_url(redis_url, decode_responses=True)
-        self._key_prefix = key_prefix
-
-    def check(self, key: str, limit: int, window: int) -> tuple[int, bool]:
-        now = time.time()
-        cutoff = now - window
-        full_key = f"{self._key_prefix}{key}" if self._key_prefix else key
-        try:
-            pipe = self._r.pipeline()
-            pipe.zremrangebyscore(full_key, "-inf", cutoff)
-            pipe.zadd(full_key, {str(now): now})
-            pipe.zcard(full_key)
-            pipe.expire(full_key, window + 1)
-            results = pipe.execute()
-        except Exception as e:
-            logger.warning("rate_limiter_redis_check_failed", key=key, error=str(e))
-            return limit, False
-
-        count = results[2]
-        if count > limit:
-            try:
-                self._r.zrem(full_key, str(now))
-            except Exception as e:
-                logger.warning("rate_limiter_redis_zrem_failed", key=full_key, error=str(e))
-            return 0, True
-        return max(limit - count, 0), False
-
-
 class _MemoryStore:
     def __init__(self):
         self._buckets: dict[str, list[float]] = defaultdict(list)
@@ -80,32 +49,13 @@ class _MemoryStore:
             return limit - count - 1, False
 
 
-def _build_store():
-    from app.core.config import settings
-
-    if settings.redis_url:
-        try:
-            store = _RedisStore(settings.redis_url, key_prefix=settings.ratelimit_prefix)
-            store._r.ping()
-            logger.info(
-                "rate_limiter_backend",
-                backend="redis",
-                key_prefix=settings.ratelimit_prefix or "<none>",
-            )
-            return store
-        except Exception as e:
-            logger.warning("rate_limiter_redis_unavailable", error=str(e))
-    logger.info("rate_limiter_backend", backend="memory")
-    return _MemoryStore()
+_cached_store: Optional[_MemoryStore] = None
 
 
-_cached_store: Optional[object] = None
-
-
-def get_store():
+def get_store() -> _MemoryStore:
     global _cached_store
     if _cached_store is None:
-        _cached_store = _build_store()
+        _cached_store = _MemoryStore()
     return _cached_store
 
 
