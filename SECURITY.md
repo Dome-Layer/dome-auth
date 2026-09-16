@@ -18,7 +18,6 @@ environment variables and in `.env.local` files (gitignored).
 |---|---|---|
 | `SUPABASE_SERVICE_ROLE_KEY` | Service role (full DB access) | On compromise or annual |
 | `SUPABASE_ANON_KEY` | Public anon key | Rotated with service role |
-| `REDIS_URL` | Connection string (contains password) | On compromise |
 | `SENTRY_DSN` | Ingest URL (low sensitivity) | On compromise |
 
 ## Rotation Policy
