@@ -114,15 +114,17 @@ pydantic-core==2.46.4
     # via pydantic
 pydantic-settings==2.14.2
     # via -r requirements.in
+pygments==2.21.0
+    # via pytest
 pyjwt==2.13.0
     # via
     #   dome-core
     #   supabase-auth
-pytest==8.2.2
+pytest==9.0.3
     # via
     #   -r requirements-dev.in
     #   pytest-asyncio
-pytest-asyncio==0.26.0
+pytest-asyncio==1.4.0
     # via -r requirements-dev.in
 python-discovery==1.4.0
     # via virtualenv
@@ -170,6 +172,7 @@ typing-extensions==4.15.0
     #   mypy
     #   pydantic
     #   pydantic-core
+    #   pytest-asyncio
     #   realtime
     #   starlette
     #   typing-inspection
